@@ -6,18 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import test.coreteka.R
-import test.coreteka.data.User
+import test.coreteka.data.Post
+import test.coreteka.databinding.ItemPostBinding
 import test.coreteka.databinding.ItemUserBinding
-import test.coreteka.presentation.core.ItemClick
 
-class UsersAdapter(context: Context, private val itemClick: ItemClick<User>) :
-    BaseFilterableAdapter<User>(context) {
+class PostsAdapter(context: Context) :
+    BaseFilterableAdapter<Post>(context) {
 
-    inner class UserViewHolder(private val binding: ItemUserBinding) :
+    inner class PostViewHolder(private val binding: ItemPostBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: User, itemClick: ItemClick<User>) {
-            binding.user = item
-            binding.itemClick = itemClick
+        fun bind(item: Post) {
+            binding.post = item
             binding.executePendingBindings()
         }
     }
@@ -33,8 +32,8 @@ class UsersAdapter(context: Context, private val itemClick: ItemClick<User>) :
             }
             else -> {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = ItemUserBinding.inflate(layoutInflater)
-                UserViewHolder(binding)
+                val binding = ItemPostBinding.inflate(layoutInflater)
+                PostViewHolder(binding)
             }
         }
     }
@@ -48,20 +47,20 @@ class UsersAdapter(context: Context, private val itemClick: ItemClick<User>) :
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is UserViewHolder) {
-            holder.bind(list[position], itemClick)
+        if (holder is PostViewHolder) {
+            holder.bind(list[position])
         }
     }
 
     fun sort() {
-        list.sortBy { it.username }
-        originalList.sortBy { it.username }
+        list.sortBy { it.title }
+        originalList.sortBy { it.title }
         notifyDataSetChanged()
     }
 
     fun sortDescending() {
-        list.sortByDescending { it.username }
-        originalList.sortByDescending { it.username }
+        list.sortByDescending { it.title }
+        originalList.sortByDescending { it.title }
         notifyDataSetChanged()
     }
 }

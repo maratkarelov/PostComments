@@ -3,4 +3,5 @@
     <string name="users">users</string>
     <string name="search">search</string>
     <string name="not_found">not found</string>
+    <string name="posts">Posts</string>
 </resources>

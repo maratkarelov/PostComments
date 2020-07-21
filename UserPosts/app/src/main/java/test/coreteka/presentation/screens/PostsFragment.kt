@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.transaction
 import androidx.recyclerview.widget.DividerItemDecoration
 import kotlinx.android.synthetic.main.search_list.*
 import kotlinx.coroutines.GlobalScope
@@ -15,18 +14,16 @@ import kotlinx.serialization.builtins.list
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import test.coreteka.R
-import test.coreteka.data.User
+import test.coreteka.data.Post
 import test.coreteka.databinding.SearchListBinding
+import test.coreteka.presentation.adapters.PostsAdapter
 import test.coreteka.presentation.adapters.UsersAdapter
 import test.coreteka.presentation.core.IConnected
-import test.coreteka.presentation.core.ItemClick
 import java.net.URL
 
-const val USER_ID = "userId"
-
-class UsersFragment : Fragment(), IConnected, ItemClick<User> {
-
-    private lateinit var adapter: UsersAdapter
+class PostsFragment : Fragment(), IConnected {
+    private var userId: Int = 0
+    private lateinit var adapter: PostsAdapter
     private lateinit var binding: SearchListBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -37,15 +34,15 @@ class UsersFragment : Fragment(), IConnected, ItemClick<User> {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
-        adapter = UsersAdapter(requireActivity(), this)
+        userId = arguments?.getInt(USER_ID) ?: 0
+        binding.tvTitle.text = getString(R.string.posts)
+        adapter = PostsAdapter(requireActivity())
         binding.rv.adapter = adapter
         binding.rv.apply {
             addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         }
         binding.etSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
-
             override fun onQueryTextChange(newText: String): Boolean {
                 adapter.filter.filter(newText)
                 return true
@@ -70,11 +67,12 @@ class UsersFragment : Fragment(), IConnected, ItemClick<User> {
 
     private fun sendRequest() {
         GlobalScope.async() {
-            val response = URL("https://jsonplaceholder.typicode.com/users").readText()
+            val response =
+                URL("https://jsonplaceholder.typicode.com/posts?userId=$userId").readText()
             val json = Json(JsonConfiguration.Stable)
             // serializing lists
             try {
-                val list = json.parse(User.serializer().list, response).toMutableList()
+                val list = json.parse(Post.serializer().list, response).toMutableList()
                 activity?.runOnUiThread {
                     adapter.updateData(list)
                     if (binding.switchSort.isChecked) {
@@ -92,16 +90,5 @@ class UsersFragment : Fragment(), IConnected, ItemClick<User> {
 
     override fun onNetworkAvailable() {
         sendRequest()
-    }
-
-    override fun onItemClick(item: User) {
-        val frag = PostsFragment()
-        val args = Bundle()
-        args.putInt(USER_ID, item.id)
-        frag.arguments = args
-        fragmentManager?.transaction {
-            replace(R.id.fragmentContainer, frag)
-            addToBackStack(null)
-        }
     }
 }
