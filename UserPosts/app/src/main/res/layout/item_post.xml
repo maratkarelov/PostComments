@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <variable
-            name="post"
-            type="test.coreteka.data.Post" />
+            name="postComments"
+            type="test.coreteka.data.PostComments" />
 
         <variable
             name="itemClick"
@@ -15,20 +16,22 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <TextView
-            android:text="@{post.title}"
+            android:text="@{postComments.post.title}"
             android:id="@+id/tv_title"
+            android:textSize="24sp"
+            android:textStyle="italic"
+            android:textColor="@color/colorPrimary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:text="@{post.body}"
+            android:text="@{postComments.post.body}"
             android:id="@+id/tv_body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -37,12 +40,25 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_title" />
 
         <TextView
-            android:text="@{`comments `+6}"
+            android:text="@{`comments `+postComments.comments.size()}"
             android:id="@+id/tv_count"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_body" />
+
+        <LinearLayout
+            android:id="@+id/l_comments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:showDividers="middle"
+            android:divider="?android:listDivider"
+            android:dividerPadding="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_count" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

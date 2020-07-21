@@ -2,13 +2,14 @@ package test.coreteka.data
 
 import kotlinx.serialization.Serializable
 
-@Serializable
-data class Post(val userId: Int, val id: Int, val title: String, val body: String){
+data class PostComments(val post: Post, var comments: List<Comment>?){
     override fun toString(): String {
-        return title
+        return post.title
     }
 }
 
+@Serializable
+data class Post(val userId: Int, val id: Int, val title: String, val body: String)
 @Serializable
 data class Comment(
     val postId: Int,

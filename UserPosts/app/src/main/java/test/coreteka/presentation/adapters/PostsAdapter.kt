@@ -1,23 +1,36 @@
 package test.coreteka.presentation.adapters
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import test.coreteka.R
-import test.coreteka.data.Post
+import test.coreteka.data.Comment
+import test.coreteka.data.PostComments
 import test.coreteka.databinding.ItemPostBinding
-import test.coreteka.databinding.ItemUserBinding
 
-class PostsAdapter(context: Context) :
-    BaseFilterableAdapter<Post>(context) {
+class PostsAdapter(context: Context, private val iShowComments: IShowComments) :
+    BaseFilterableAdapter<PostComments>(context) {
 
     inner class PostViewHolder(private val binding: ItemPostBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: Post) {
-            binding.post = item
+        fun bind(item: PostComments) {
+            binding.postComments = item
             binding.executePendingBindings()
+            binding.lComments.removeAllViews()
+            if (item.comments != null) {
+                for (comment in item.comments!!) {
+                    val tvEmail = TextView(context)
+                    tvEmail.text = comment.email
+                    val tvComment = TextView(context)
+                    tvComment.text = comment.body
+                    binding.lComments.addView(tvEmail)
+                    binding.lComments.addView(tvComment)
+                }
+            }
         }
     }
 
@@ -48,19 +61,39 @@ class PostsAdapter(context: Context) :
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is PostViewHolder) {
-            holder.bind(list[position])
+            val postComments = list[position]
+            Log.d(
+                "qwerty onBindViewHolder",
+                "post =${postComments.post.id}, comments = " + postComments.comments?.size
+            )
+            holder.bind(postComments)
+            if (postComments.comments == null) {
+                iShowComments.readComments(postComments.post.id)
+            }
         }
     }
 
     fun sort() {
-        list.sortBy { it.title }
-        originalList.sortBy { it.title }
+        list.sortBy { it.post.title }
+        originalList.sortBy { it.post.title }
         notifyDataSetChanged()
     }
 
     fun sortDescending() {
-        list.sortByDescending { it.title }
-        originalList.sortByDescending { it.title }
+        list.sortByDescending { it.post.title }
+        originalList.sortByDescending { it.post.title }
         notifyDataSetChanged()
     }
+
+    fun updateComments(postId: Int, listComments: List<Comment>) {
+        if (listComments.isNotEmpty()) {
+            val postComments: PostComments? = list.find { it.post.id == postId }
+            postComments?.comments = listComments
+            notifyItemChanged(list.indexOf(postComments))
+        }
+    }
+}
+
+interface IShowComments {
+    fun readComments(postId: Int)
 }
