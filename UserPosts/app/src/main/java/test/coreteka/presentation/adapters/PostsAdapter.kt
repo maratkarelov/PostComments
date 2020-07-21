@@ -21,6 +21,13 @@ class PostsAdapter(context: Context, private val iShowComments: IShowComments) :
             binding.postComments = item
             binding.executePendingBindings()
             binding.lComments.removeAllViews()
+            binding.setOnExpandChange() { _, isChecked ->
+                if (isChecked) {
+                    binding.lComments.visibility = View.VISIBLE
+                } else {
+                    binding.lComments.visibility = View.GONE
+                }
+            }
             if (item.comments != null) {
                 for (comment in item.comments!!) {
                     val tvEmail = TextView(context)

@@ -10,8 +10,8 @@
             type="test.coreteka.data.PostComments" />
 
         <variable
-            name="itemClick"
-            type="test.coreteka.presentation.core.ItemClick" />
+            name="onExpandChange"
+            type="android.widget.CompoundButton.OnCheckedChangeListener" />
 
     </data>
 
@@ -20,41 +20,45 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:text="@{postComments.post.title}"
             android:id="@+id/tv_title"
-            android:textSize="24sp"
-            android:textStyle="italic"
-            android:textColor="@color/colorPrimary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@{postComments.post.title}"
+            android:textColor="@color/colorPrimary"
+            android:textSize="24sp"
+            android:textStyle="italic"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:text="@{postComments.post.body}"
             android:id="@+id/tv_body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="@{postComments.post.body}"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_title" />
 
-        <TextView
-            android:text="@{`comments `+postComments.comments.size()}"
+        <Switch
             android:id="@+id/tv_count"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onCheckedChanged="@{onExpandChange}"
+            android:text="@{`comments `+postComments.comments.size()}"
+            android:thumb="@drawable/expand_selector"
+            android:track="@null"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_body" />
 
         <LinearLayout
+            android:visibility="gone"
             android:id="@+id/l_comments"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:showDividers="middle"
             android:divider="?android:listDivider"
             android:dividerPadding="16dp"
+            android:orientation="vertical"
+            android:showDividers="middle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_count" />
